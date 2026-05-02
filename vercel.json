@@ -3,6 +3,5 @@
   "outputDirectory": "frontend/dist",
   "framework": "vite",
   "public": false,
-  "env": {},
-  "regions": ["default"]
+  "env": {}
 }
