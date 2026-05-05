@@ -64,7 +64,7 @@ export default function LawViewer() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const [apiInput, setApiInput] = useState("http://0.0.0.0:8001/link_to_json")
+    const [apiInput, setApiInput] = useState("https://cyberdemocracy-production.up.railway.app/link_to_json")
     const [linkInput, setLinkInput] = useState("https://zakon.rada.gov.ua/laws/show/2145-19#Text") // <-- ссылка из input
 
 
