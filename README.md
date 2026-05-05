@@ -1,5 +1,7 @@
 # Cyber Democracy Platform
 
+🌐 Live: https://cyber-democracy.org/
+
 ## 📌 Overview
 
 Cyber Democracy — це веб-платформа для аналізу, структурування та візуалізації законодавчих даних.  
