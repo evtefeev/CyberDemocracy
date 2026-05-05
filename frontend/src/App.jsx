@@ -43,7 +43,7 @@ export default function App() {
           <Users />
           <TechStack />
           <Roadmap />
-          <CTA />
+          <CTA setPage={setPage} />
 
         </>
       ) : page === "viewer" ? (
@@ -547,7 +547,7 @@ function Roadmap() {
   )
 }
 
-function CTA() {
+function CTA({ setPage }) {
   return (
     <section id="cta">
       <div className="cta-frame">
@@ -561,8 +561,9 @@ function CTA() {
           Перетворіть державу на прозору, керовану та підзвітну систему через технології та AI.
         </div>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button className="btn-primary">REQUEST ACCESS →</button>
-          <button className="btn-sec">[ VIEW DOCS ]</button>
+          <button className="btn-primary" onClick={(e) => { e.preventDefault(); setPage('team') }}>REQUEST ACCESS →</button>
+
+          <button className="btn-sec" onClick={() => window.open("https://github.com/evtefeev/CyberDemocracy", "_blank")}>[ VIEW DOCS ]</button>
         </div>
         <div className="cta-motto">// Transparency. Accountability. Technology.</div>
       </div>
