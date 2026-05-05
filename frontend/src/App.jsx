@@ -4,6 +4,7 @@ import LawViewer from "./components/LawViewer"
 import Team from "./components/Team";
 import { useRef } from "react"
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
       ) : null}
       <Footer />
       <Analytics />
+      <SpeedInsights />
 
     </div>
   );
