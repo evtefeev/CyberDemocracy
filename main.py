@@ -9,6 +9,8 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 
+from parser import parse_document
+
 lock = asyncio.Lock()
 
 
