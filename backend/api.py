@@ -27,7 +27,9 @@ app.add_middleware(
 def health():
     return {"status": "ok"}
 
-# handler = Mangum(app)
+@app.get("/")
+def root():
+    return {"status": "ok"}
 
 # Хранилища
 last_request_time = {}
