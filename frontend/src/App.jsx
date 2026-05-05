@@ -1,5 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react'
+import LawViewer from "./components/LawViewer"
+
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -599,7 +601,7 @@ function TreeNode({ node, level = 0, keyName = "" }) {
   )
 }
 
-function LawViewer({ data }) {
+function LawViewerOld({ data }) {
   const [jsonInput, setJsonInput] = useState(JSON.stringify(data || {}, null, 2))
   const [parsed, setParsed] = useState(data || null)
   const [error, setError] = useState(null)
