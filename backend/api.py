@@ -4,8 +4,7 @@ import time
 from fastapi import FastAPI, UploadFile, File
 import httpx
 from pydantic import BaseModel
-from html_parser import parse_law
-from parser import parse_document
+from .html_parser import parse_law
 from fastapi import FastAPI, Request, HTTPException, Depends
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
