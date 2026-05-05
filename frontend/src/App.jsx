@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import LawViewer from "./components/LawViewer"
 import Team from "./components/Team";
 import { useRef } from "react"
+import { Analytics } from "@vercel/analytics/next"
+
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -52,6 +54,8 @@ export default function App() {
         <Team />
       ) : null}
       <Footer />
+      <Analytics />
+
     </div>
   );
 }
