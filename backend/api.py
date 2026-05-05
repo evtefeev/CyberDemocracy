@@ -4,7 +4,7 @@ import time
 from fastapi import FastAPI, UploadFile, File
 import httpx
 from pydantic import BaseModel
-from cleaner import clean_law_html, clean_rada_law
+from html_parser import parse_law
 from parser import parse_document
 from fastapi import FastAPI, Request, HTTPException, Depends
 import asyncio
@@ -106,17 +106,9 @@ async def link_to_json(
         content = response.content
 
     html = content.decode("utf-8")
-    with open("temp.html", "w") as fil:
-        fil.write(html)
-    # print(html)
-    # print('-'*30)
-    clean_text = clean_rada_law(html)
-    with open("clean_text_temp.txt", "w") as fil:
-        fil.write(clean_text)
-    print(clean_text)
-    print('-'*30)
-    result = parse_document(clean_text)
-    print(result)
-    print('-'*30)
+
+   
+    result = parse_law(html)
+    
 
     return result
