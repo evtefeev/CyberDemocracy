@@ -23,6 +23,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
+# handler = Mangum(app)
+
 # Хранилища
 last_request_time = {}
 daily_requests = defaultdict(lambda: {"count": 0, "reset_time": 0})
