@@ -8,12 +8,20 @@ from cleaner import clean_law_html, clean_rada_law
 from parser import parse_document
 from fastapi import FastAPI, Request, HTTPException, Depends
 import asyncio
+from fastapi.middleware.cors import CORSMiddleware
 
 lock = asyncio.Lock()
 
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # лучше заменить на фронтенд домен позже
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Хранилища
 last_request_time = {}

@@ -59,55 +59,52 @@ def clean_law_html(html: str) -> str:
 def clean_rada_law(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
 
-    # 1. Беремо тільки основний контент
-    article = soup.select_one("#article")
-    if not article:
-        article = soup  # fallback
+    article = soup.select_one("#article") or soup
 
-    # 2. Видаляємо непотрібне
     for tag in article(["script", "style", "noscript", "img", "svg"]):
         tag.decompose()
 
-    # 3. Видаляємо службові елементи (якорі, span-и стилів)
     for tag in article.find_all(["a", "span"]):
-        # залишаємо текст, але прибираємо сам тег
         tag.unwrap()
 
-    # 4. Видаляємо таблиці (герб, шапка)
     for table in article.find_all("table"):
         table.decompose()
 
-    # 5. Витягуємо текст тільки з абзаців
     paragraphs = article.find_all("p")
 
-    lines = []
+    blocks = []
+
     for p in paragraphs:
-        text = p.get_text(" ", strip=True)
+        # ВАЖЛИВО: preserve structure inside paragraph
+        text = p.get_text(separator="\n", strip=True)
 
-        # чистка
-        text = re.sub(r"\s+", " ", text)
+        # нормалізація пробілів, але НЕ переносів між рядками
+        text = re.sub(r"[ \t]+", " ", text)
 
-        if not text:
+        lines = [line.strip() for line in text.split("\n") if line.strip()]
+
+        if not lines:
             continue
 
-        # фільтр сміття
-        if len(text) < 3:
+        block = "\n".join(lines)
+
+        if len(block) < 3:
             continue
-        if text.lower().startswith(("друкувати", "допомога")):
+
+        if block.lower().startswith(("друкувати", "допомога")):
             continue
 
-        lines.append(text)
+        blocks.append(block)
 
-    # 6. Пост-обробка
-    result = "\n".join(lines)
+    result = "\n\n".join(blocks)
 
-    # прибираємо артефакти типу "8 - 1"
-    result = re.sub(r"\s*-\s*", "-", result)
+    # прибираємо подвійні пробіли
+    result = re.sub(r"[ \t]+", " ", result)
 
-    # нормалізація переносів
-    result = re.sub(r"\n{2,}", "\n\n", result)
+    # нормалізація пустих рядків
+    result = re.sub(r"\n{3,}", "\n\n", result)
 
-    return result
+    return result.strip()
 
 
 

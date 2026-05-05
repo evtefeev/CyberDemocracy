@@ -1,6 +1,8 @@
 import re
 import json
 
+from bs4 import BeautifulSoup
+
 
 # -----------------------------
 # HELPERS
@@ -483,6 +485,80 @@ def parse_points(text: str):
 # ROUTER
 # -----------------------------
 
+
+def parse_rada_law_html(html: str) -> dict:
+    soup = BeautifulSoup(html, "html.parser")
+
+    article = soup.select_one("#article")
+    if not article:
+        article = soup
+
+    # удалить мусор
+    for tag in article(["script", "style", "img", "svg"]):
+        tag.decompose()
+
+    lines = []
+    for p in article.find_all("p"):
+        text = p.get_text(" ", strip=True)
+        if text:
+            lines.append(text)
+
+    result = {
+        "title": None,
+        "sections": []
+    }
+
+    current_section = None
+    current_article = None
+
+    for line in lines:
+
+        # === TITLE ===
+        if not result["title"] and "ЗАКОН УКРАЇНИ" in line:
+            continue
+
+        if not result["title"] and len(line) < 200:
+            result["title"] = line
+            continue
+
+        # === SECTION ===
+        if "Розділ" in line:
+            current_section = {
+                "title": line,
+                "articles": []
+            }
+            result["sections"].append(current_section)
+            current_article = None
+            continue
+
+        # === ARTICLE ===
+        if line.startswith("Стаття"):
+            current_article = {
+                "title": line,
+                "content": [],
+                "points": []
+            }
+
+            if current_section is None:
+                current_section = {"title": None, "articles": []}
+                result["sections"].append(current_section)
+
+            current_section["articles"].append(current_article)
+            continue
+
+        # === POINTS (1), 2) ===
+        if re.match(r"^\d+[\)\.]", line):
+            if current_article:
+                current_article["points"].append(line)
+            continue
+
+        # === CONTENT ===
+        if current_article:
+            current_article["content"].append(line)
+
+    return result
+
+
 def parse_document(text: str):
     text = preprocess(text)
 
@@ -505,7 +581,7 @@ def parse_document(text: str):
 # -----------------------------
 
 if __name__ == "__main__":
-    name = "nakaz.txt"
+    name = "law.txt"
     out_name = name.split(".")[0] + ".json"
     with open(name, "r", encoding="utf-8") as f:
         text = f.read()
