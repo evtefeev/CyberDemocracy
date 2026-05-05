@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import LawViewer from "./components/LawViewer"
 import Team from "./components/Team";
 import { useRef } from "react"
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 
 export default function App() {
