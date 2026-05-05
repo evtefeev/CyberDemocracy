@@ -1,28 +1,42 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import LawViewer from "./components/LawViewer"
-
+import { useRef } from "react"
 
 export default function App() {
   const [page, setPage] = useState('landing')
   const [lawData, setLawData] = useState(null)
+  const problemsRef = useRef(null)
 
-  useEffect(() => {
-    if (page === 'viewer') {
-      fetch('/law.json')
-        .then(res => res.json())
-        .then(data => setLawData(data))
-        .catch(err => console.error('Error loading law.json:', err))
-    }
-  }, [page])
+  const scrollToProblems = () => {
+    problemsRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  // useEffect(() => {
+  //   if (page === 'viewer') {
+  //     fetch('/law.json')
+  //       .then(res => res.json())
+  //       .then(data => setLawData(data))
+  //       .catch(err => console.error('Error loading law.json:', err))
+  //   }
+  // }, [page])
 
   return (
     <div className="app">
       <Nav page={page} setPage={setPage} />
-      {page === 'landing' ? (
+
+      {page === "landing" ? (
         <>
-          <Hero />
-          <Problems />
+          <Hero
+            onGetStarted={scrollToProblems}
+            onDemo={() => setPage("viewer")}
+            setPage={setPage}
+          />
+
+          <div ref={problemsRef}>
+            <Problems />
+          </div>
+
           <Solution />
           <Architecture />
           <Users />
@@ -41,20 +55,30 @@ export default function App() {
 function Nav({ page, setPage }) {
   return (
     <nav>
-      <div className="nav-logo">
+      <div className="nav-logo" style={{cursor: "pointer"}} onClick={(e) => { e.preventDefault(); setPage('landing') }}>
         <div className="dot"></div>
+
         CYBER_DEMOCRACY
       </div>
       <div className="nav-links">
-        <a href="#" onClick={(e) => { e.preventDefault(); setPage('landing') }} style={{ color: page === 'landing' ? 'var(--green)' : 'var(--muted)' }}>Landing</a>
-        <a href="#" onClick={(e) => { e.preventDefault(); setPage('viewer') }} style={{ color: page === 'viewer' ? 'var(--green)' : 'var(--muted)' }}>Viewer</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setPage('landing') }} style={{ color: page === 'landing' ? 'var(--green)' : 'var(--muted)' }}>Home</a>
+        {/* <a href="#" onClick={(e) => { e.preventDefault(); setPage('viewer') }} style={{ color: page === 'viewer' ? 'var(--green)' : 'var(--muted)' }}>Viewer</a> */}
       </div>
-      <button className="nav-cta">[ DEMO ]</button>
+      <button
+        className="nav-cta"
+        onClick={(e) => {
+          e.preventDefault()
+          setPage('viewer')
+        }}
+      >
+        [ DEMO ]
+      </button>
     </nav>
   )
 }
 
-function Hero() {
+function Hero({ onGetStarted, onDemo, setPage }) {
+
   return (
     <section id="hero">
       <div className="hero-grid"></div>
@@ -75,8 +99,13 @@ function Hero() {
           базі штучного інтелекту.
         </p>
         <div className="hero-actions">
-          <button className="btn-primary">GET STARTED →</button>
-          <button className="btn-sec">[ LIVE DEMO ]</button>
+          <button className="btn-primary" onClick={onGetStarted}>
+            GET STARTED →
+          </button>
+
+          <button className="btn-sec" onClick={() => setPage("viewer")}>
+            [ LIVE DEMO ]
+          </button>
         </div>
       </div>
       <div className="hero-stats">
@@ -598,91 +627,5 @@ function TreeNode({ node, level = 0, keyName = "" }) {
         </div>
       )}
     </div>
-  )
-}
-
-function LawViewerOld({ data }) {
-  const [jsonInput, setJsonInput] = useState(JSON.stringify(data || {}, null, 2))
-  const [parsed, setParsed] = useState(data || null)
-  const [error, setError] = useState(null)
-
-  const handleParse = () => {
-    try {
-      setParsed(JSON.parse(jsonInput))
-      setError(null)
-    } catch (e) {
-      setError("Invalid JSON")
-    }
-  }
-
-  return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '24px',
-      padding: '80px 60px',
-      minHeight: '100vh',
-      background: 'var(--bg)'
-    }}>
-      {/* INPUT */}
-      <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '60px' }}>
-        <h2 style={{ fontWeight: '700', marginBottom: '16px', color: 'var(--green)', fontSize: '18px', fontFamily: "'Share Tech Mono', monospace", letterSpacing: '2px' }}>
-          [ JSON_INPUT ]
-        </h2>
-        <textarea
-          style={{
-            width: '100%',
-            height: '100%',
-            border: '1px solid rgba(0,255,136,.2)',
-            padding: '16px',
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '12px',
-            background: 'var(--bg2)',
-            color: 'var(--text)',
-            resize: 'none',
-            minHeight: '600px'
-          }}
-          value={jsonInput}
-          onChange={(e) => setJsonInput(e.target.value)}
-        />
-        <button
-          onClick={handleParse}
-          style={{
-            marginTop: '12px',
-            background: 'var(--green)',
-            color: 'var(--bg)',
-            padding: '10px 20px',
-            border: 'none',
-            fontFamily: "'Share Tech Mono', monospace",
-            fontWeight: '700',
-            cursor: 'pointer',
-            letterSpacing: '1px',
-            fontSize: '12px'
-          }}
-        >
-          PARSE JSON
-        </button>
-        {error && <div style={{ color: 'var(--red)', marginTop: '12px', fontFamily: "'Share Tech Mono', monospace" }}>{error}</div>}
-      </div>
-
-      {/* VIEWER */}
-      <div style={{
-        display: 'flex', flexDirection: 'column', paddingTop: '60px',
-
-      }}> <h2 style={{ fontWeight: '700', marginBottom: '16px', color: 'var(--cyan)', fontSize: '18px', fontFamily: "'Share Tech Mono', monospace", letterSpacing: '2px' }}>
-          [ VIEWER ]
-        </h2><div style={{
-          overflowY: 'auto',
-          border: '1px solid rgba(0,255,136,.2)',
-          padding: '16px',
-          background: 'var(--bg2)',
-          paddingTop: '80px',
-          maxHeight: 'calc(100vh - 60px)'
-        }}>
-
-          {parsed ? <TreeNode node={parsed} keyName="root" /> : <div style={{ color: 'var(--muted)' }}>No data loaded</div>}
-        </div>
-      </div>
-    </div >
   )
 }
