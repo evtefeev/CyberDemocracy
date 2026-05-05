@@ -1,6 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import LawViewer from "./components/LawViewer"
+import Team from "./components/Team";
 import { useRef } from "react"
 
 export default function App() {
@@ -43,25 +44,29 @@ export default function App() {
           <TechStack />
           <Roadmap />
           <CTA />
-          <Footer />
+
         </>
-      ) : (
+      ) : page === "viewer" ? (
         <LawViewer data={lawData} />
-      )}
+      ) : page === "team" ? (
+        <Team />
+      ) : null}
+      <Footer />
     </div>
-  )
+  );
 }
 
 function Nav({ page, setPage }) {
   return (
     <nav>
-      <div className="nav-logo" style={{cursor: "pointer"}} onClick={(e) => { e.preventDefault(); setPage('landing') }}>
+      <div className="nav-logo" style={{ cursor: "pointer" }} onClick={(e) => { e.preventDefault(); setPage('landing') }}>
         <div className="dot"></div>
 
         CYBER_DEMOCRACY
       </div>
       <div className="nav-links">
         <a href="#" onClick={(e) => { e.preventDefault(); setPage('landing') }} style={{ color: page === 'landing' ? 'var(--green)' : 'var(--muted)' }}>Home</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setPage('team') }} style={{ color: page === 'landing' ? 'var(--green)' : 'var(--muted)' }}>Team</a>
         {/* <a href="#" onClick={(e) => { e.preventDefault(); setPage('viewer') }} style={{ color: page === 'viewer' ? 'var(--green)' : 'var(--muted)' }}>Viewer</a> */}
       </div>
       <button
